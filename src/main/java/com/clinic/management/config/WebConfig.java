@@ -23,6 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization")
             .allowedOrigins("https://nexhealth-frontend.vercel.app")
+            .allowedMethods("*")
                 .allowCredentials(true);
     }
 }
