@@ -105,7 +105,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
         	    "http://localhost:3000",
         	    "http://localhost:5173",
-        	    "https://nexhealth-frontend.onrender.com" // Ensure this matches your Render Dashboard URL
+        	    "https://nexhealth-frontend.vercel.app/" // Ensure this matches your Render Dashboard URL
         	));
         
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
