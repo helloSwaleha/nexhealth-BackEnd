@@ -39,56 +39,58 @@ public class SecurityConfig {
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
 
-            // 3. STATELESS SESSION (No cookies, use JWT)
+            // 3. STATELESS SESSION
             .sessionManagement(session -> 
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
             // 4. AUTHORIZE REQUESTS
             .authorizeHttpRequests(auth -> auth
-    // 1. PUBLIC ENDPOINTS
-    .requestMatchers("/", "/error", "/auth/**").permitAll()
-    .requestMatchers("/api/patient/login", "/api/patient/signup").permitAll()
-    .requestMatchers("/api/clinics/**", "/api/doctors/**", "/doctors/**").permitAll()
-    
-    // 2. ADMIN ACCESS (Unified to use 'hasRole')
-    // Note: ensure your JwtFilter adds "ROLE_" prefix to the authority
-    .requestMatchers("/admin/**").hasRole("ADMIN")
-    .requestMatchers("/api/admin/**").hasRole("ADMIN")
-    
-    // 3. DOCTOR ACCESS
-    .requestMatchers("/doctor/dashboard/**", "/doctor/update/**").hasRole("DOCTOR")
-    .requestMatchers("/doctor/**").hasAnyRole("DOCTOR", "ADMIN")
-    
-    // 4. PATIENT ACCESS
-    .requestMatchers("/api/patient/**", "/patient/**").hasRole("PATIENT")
-    
-    // 5. SHARED ACCESS
-    .requestMatchers("/appointments/**").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
-    
-    .anyRequest().authenticated()
-)
+                // PUBLIC ENDPOINTS
+                .requestMatchers("/", "/error", "/auth/**").permitAll()
+                .requestMatchers("/api/patient/login", "/api/patient/signup").permitAll()
+                .requestMatchers("/api/clinics/**", "/api/doctors/**", "/doctors/**").permitAll()
+                
+                // ADMIN ACCESS
+                // We use hasAnyAuthority to match "ADMIN" or "ROLE_ADMIN" exactly as it is in your DB
+                .requestMatchers("/admin/**", "/api/admin/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                
+                // DOCTOR ACCESS
+                .requestMatchers("/doctor/dashboard/**", "/doctor/update/**").hasAnyAuthority("DOCTOR", "ROLE_DOCTOR")
+                .requestMatchers("/doctor/**").hasAnyAuthority("DOCTOR", "ROLE_DOCTOR", "ADMIN", "ROLE_ADMIN")
+                
+                // PATIENT ACCESS
+                .requestMatchers("/api/patient/**", "/patient/**").hasAnyAuthority("PATIENT", "ROLE_PATIENT")
+                
+                // SHARED ACCESS
+                .requestMatchers("/appointments/**").hasAnyAuthority("PATIENT", "ROLE_PATIENT", "DOCTOR", "ROLE_DOCTOR", "ADMIN", "ROLE_ADMIN")
+                
+                .anyRequest().authenticated()
+            )
+
             // 5. ADD JWT FILTER
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // 🌐 CORS Configuration: Allows React (3000) to communicate with Spring (8080)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // ✅ Add your Render Frontend URL here alongside localhost
+        // Removed trailing slash from Vercel URL and added common variations
         configuration.setAllowedOrigins(Arrays.asList(
-        	    "http://localhost:3000",
-        	    "http://localhost:5173",
-        	    "https://nexhealth-frontend.vercel.app/" // Ensure this matches your Render Dashboard URL
-        	));
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "https://nexhealth-frontend.vercel.app" 
+        ));
         
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+        // Allowed all common headers to prevent pre-flight 403s
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
         configuration.setAllowCredentials(true);
+        // Important for the frontend to read the token if sent in headers
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
