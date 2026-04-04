@@ -82,6 +82,10 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             // ✅ FIX: Allow both Patients and Doctors to SEE prescriptions (GET)
             .requestMatchers(HttpMethod.GET, "/api/doctor/prescriptions/**")
             .hasAnyAuthority("DOCTOR", "PATIENT", "ROLE_DOCTOR", "ROLE_PATIENT")
+                               
+           // ✅ Keep SAVING prescriptions (POST) restricted to only Doctors
+            .requestMatchers(HttpMethod.POST, "/api/doctor/prescriptions/**")
+            .hasAnyAuthority("DOCTOR", "ROLE_DOCTOR")
             
             .anyRequest().authenticated()
         )
