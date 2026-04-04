@@ -45,7 +45,9 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .requestMatchers("/api/clinics/**").permitAll()
              // ✅ FIX 1: Allow patients to see their own appointments
             .requestMatchers("/appointments/patient/**").hasAnyAuthority("PATIENT", "ROLE_PATIENT", "ADMIN", "ROLE_ADMIN")
-    
+            // ✅ FIX: Allow Doctors to POST prescriptions
+            .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/doctor/prescriptions/**").hasAnyAuthority("DOCTOR", "ROLE_DOCTOR")
+            .requestMatchers("/api/doctor/prescriptions/**").hasAnyAuthority("DOCTOR", "ROLE_DOCTOR", "ADMIN")
             // ✅ FIX 2: Allow patients to view prescriptions (This matches the /api/doctor prefix in your JSX)
             .requestMatchers("/api/doctor/prescriptions/**").hasAnyAuthority("DOCTOR", "PATIENT", "ROLE_PATIENT", "ADMIN")
             
