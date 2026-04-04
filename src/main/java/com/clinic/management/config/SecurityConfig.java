@@ -70,6 +70,14 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             
             // 6. SHARED ACCESS
             .requestMatchers("/appointments/**").hasAnyAuthority("PATIENT", "ROLE_PATIENT", "DOCTOR", "ROLE_DOCTOR", "ADMIN", "ROLE_ADMIN")
+
+              // ✅ ALLOW BOTH DOCTORS AND PATIENTS TO GET PRESCRIPTIONS
+            .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/doctor/prescriptions/**")
+            .hasAnyAuthority("DOCTOR", "PATIENT", "ROLE_DOCTOR", "ROLE_PATIENT")
+
+            // Keep your POST rule restricted to Doctors only
+            .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/doctor/prescriptions/**")
+            .hasAnyAuthority("DOCTOR", "ROLE_DOCTOR")
             
             .anyRequest().authenticated()
         )
