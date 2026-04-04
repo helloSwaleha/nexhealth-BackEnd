@@ -28,7 +28,7 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
-   @Bean
+  @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .cors(Customizer.withDefaults()) 
@@ -67,12 +67,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
-}            // 5. ADD JWT FILTER
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
+}
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
