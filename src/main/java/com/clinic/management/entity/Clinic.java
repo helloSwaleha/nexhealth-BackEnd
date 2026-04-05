@@ -35,4 +35,8 @@ public class Clinic extends BaseEntity {
 
  @Enumerated(EnumType.STRING)
  private ClinicStatus status;
+
+
+ public String getImageUrl() { return imageUrl; }
+public void setStatus(ClinicStatus status) { this.status = status; }
 }
