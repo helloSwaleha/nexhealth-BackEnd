@@ -50,6 +50,10 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             // Rule A: Allow Patients AND Doctors to VIEW prescriptions
             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/doctor/prescriptions/**")
                 .hasAnyAuthority("DOCTOR", "PATIENT", "ROLE_DOCTOR", "ROLE_PATIENT", "ADMIN")
+                               
+            //patient dashboard recent prescription show
+             .requestMatchers(org.springframework.http.HttpMethod.GET, "api/patient/prescriptions/**")
+                .hasAnyAuthority("DOCTOR", "PATIENT", "ROLE_DOCTOR", "ROLE_PATIENT", "ADMIN")
             
             // Rule B: Allow ONLY Doctors to CREATE prescriptions
             .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/doctor/prescriptions/**")
