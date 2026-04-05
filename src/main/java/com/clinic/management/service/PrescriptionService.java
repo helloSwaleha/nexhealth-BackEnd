@@ -58,11 +58,7 @@ public class PrescriptionService {
         document.close();
     }
 
-	public List<Prescription> getPrescriptionsByPatientId(Long patientId) {
-    // This assumes your PrescriptionRepository has findByPatientId
-    return prescriptionRepository.findByPatientId(patientId);
-}
-
+	
 	public Prescription getPrescriptionById(Long id) {
 		// TODO Auto-generated method stub
 		return prescriptionRepository.findById(id).orElse(null);
