@@ -52,7 +52,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
                 .hasAnyAuthority("DOCTOR", "PATIENT", "ROLE_DOCTOR", "ROLE_PATIENT", "ADMIN")
                                
             //patient dashboard recent prescription show
-             .requestMatchers(org.springframework.http.HttpMethod.GET, "api/patient/prescriptions/**")
+             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/patient/prescriptions/**")
                 .hasAnyAuthority("DOCTOR", "PATIENT", "ROLE_DOCTOR", "ROLE_PATIENT", "ADMIN")
             
             // Rule B: Allow ONLY Doctors to CREATE prescriptions
