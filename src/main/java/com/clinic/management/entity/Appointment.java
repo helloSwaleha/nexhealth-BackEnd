@@ -39,11 +39,6 @@ public class Appointment extends BaseEntity {
     @Column(name = "status", nullable = false)
     private AppointmentStatus status; 
 
-    // currently added this line
-    public Doctor getDoctor() { return doctor; }
-public Patient getPatient() { return patient; }
-public void setStatus(AppointmentStatus status) { this.status = status; }
-
     
  // Inside Appointment.java
     public String getPatientName() {
