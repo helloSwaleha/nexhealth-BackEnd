@@ -16,6 +16,9 @@ import com.clinic.management.entity.Doctor;
 import com.clinic.management.entity.Patient;
 import com.clinic.management.repository.AppointmentRepository;
 import com.clinic.management.repository.DoctorRepository;
+import com.clinic.management.entity.Prescription; // Fixes "cannot find symbol: class Prescription"
+import com.clinic.management.service.DoctorService; // Fixes "cannot find symbol: variable doctorService"
+import com.clinic.management.service.PrescriptionService; // Fixes "cannot find symbol: variable prescriptionService"
 
 @RestController
 // CHANGED: Base path to /doctor to match your React frontend calls
@@ -26,7 +29,11 @@ public class DoctorController {
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
     
-    
+    @Autowired
+    private DoctorService doctorService;
+
+    @Autowired
+    private PrescriptionService prescriptionService; // Add this line
 
     public DoctorController(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository) {
         this.appointmentRepository = appointmentRepository;
