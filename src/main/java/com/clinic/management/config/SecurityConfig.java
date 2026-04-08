@@ -13,8 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.http.HttpMethod;
 
 import java.util.Arrays;
@@ -29,10 +29,34 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
+    /**
+     * ✅ THE FIX: Explicit CorsFilter Bean
+     * This ensures CORS is handled at the highest priority before any security filters.
+     */
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "https://nexhealth-frontend.vercel.app"
+        ));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setExposedHeaders(Arrays.asList("Authorization"));
+        
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
+            // Use the corsFilter bean defined above
+            .cors(Customizer.withDefaults()) 
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
@@ -40,7 +64,7 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                // ✅ CRITICAL: Allow all OPTIONS requests for CORS pre-flight checks
+                // Allow pre-flight OPTIONS requests for all paths
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                 // 1. PUBLIC ENDPOINTS
@@ -50,11 +74,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/doctor/{id}").permitAll()
 
                 // 2. PRESCRIPTION RULES
-                // View Access
                 .requestMatchers(HttpMethod.GET, "/api/doctor/prescriptions/**", "/api/patient/prescriptions/**", "/api/doctor/my-patients-history")
                     .hasAnyAuthority("DOCTOR", "PATIENT", "ADMIN", "ROLE_DOCTOR", "ROLE_PATIENT", "ROLE_ADMIN")
                 
-                // Creation Access
                 .requestMatchers(HttpMethod.POST, "/api/doctor/prescriptions/**")
                     .hasAnyAuthority("DOCTOR", "ROLE_DOCTOR", "ADMIN", "ROLE_ADMIN")
 
@@ -74,30 +96,6 @@ public class SecurityConfig {
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        
-        // Allowed Origins (Vercel + Local)
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "https://nexhealth-frontend.vercel.app" 
-        ));
-        
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        
-        // ✅ Wildcard allowed headers to prevent pre-flight 403s on Admin Login
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        
-        configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 
     @Bean
