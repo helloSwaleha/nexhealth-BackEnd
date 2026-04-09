@@ -18,10 +18,12 @@ public class PrescriptionService {
 
     // 1. Declare the repository variable
     private final PrescriptionRepository prescriptionRepository;
+	private final DoctorRepository doctorRepository;
 
     // 2. Inject it via constructor
-    public PrescriptionService(PrescriptionRepository prescriptionRepository) {
+    public PrescriptionService(PrescriptionRepository prescriptionRepository, DoctorRepository doctorRepository) {
         this.prescriptionRepository = prescriptionRepository;
+		this.doctorRepository = doctorRepository;
     }
 
     public List<Prescription> getPrescriptionsByPatientEmail(String email) {
