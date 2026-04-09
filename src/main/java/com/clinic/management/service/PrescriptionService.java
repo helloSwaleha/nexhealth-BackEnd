@@ -10,6 +10,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import com.clinic.management.entity.Prescription;
 import com.clinic.management.repository.PrescriptionRepository;
+import com.clinic.management.entity.Doctor;
+import com.clinic.management.repository.DoctorRepository;
 
 @Service
 public class PrescriptionService {
