@@ -1,7 +1,7 @@
 package com.clinic.management.repository;
 
 import com.clinic.management.entity.Prescription;
-import org.jspecify.annotations.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -22,7 +22,7 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
 
     Long countByDoctorId(Long doctorId);
 
-    @Nullable
+  
     List<Prescription> findByPatientIdOrderByCreatedAtDesc(Long patientId);
     
     // Cleanup: If you don't have Email logic yet, you can remove this or keep it as is.
