@@ -48,11 +48,7 @@ public class Doctor extends BaseEntity {
     @JoinColumn(name = "clinic_id", referencedColumnName = "id", nullable = false)
     private Clinic clinic;
 
-   
-    @Override
-    public Long getId() {
-        return super.getId();
-    }
-
-
+    // Note: No need for getId() override. 
+    // Since 'id' is protected in BaseEntity, 
+    // @Getter will automatically provide a working getId() method.
 }
