@@ -80,9 +80,8 @@ public class SecurityConfig {
                     .hasAnyAuthority("DOCTOR", "ROLE_DOCTOR", "ADMIN", "ROLE_ADMIN")
 
                 // 3. APPOINTMENT RULES
-                // ✅ NEW LINE ADDED HERE: Fixes the 403 for booking
+              
                 .requestMatchers("/api/patient-appointments/**").hasAnyAuthority("PATIENT", "ROLE_PATIENT", "ADMIN", "ROLE_ADMIN")
-                
                 .requestMatchers("/appointments/patient/**").hasAnyAuthority("PATIENT", "ROLE_PATIENT", "ADMIN", "ROLE_ADMIN")
                 .requestMatchers("/appointments/doctor/**", "/appointments/{id}/**").hasAnyAuthority("DOCTOR", "ROLE_DOCTOR", "ADMIN", "ROLE_ADMIN")
                 .requestMatchers("/appointments/**").hasAnyAuthority("PATIENT", "DOCTOR", "ADMIN", "ROLE_PATIENT", "ROLE_DOCTOR", "ROLE_ADMIN")
