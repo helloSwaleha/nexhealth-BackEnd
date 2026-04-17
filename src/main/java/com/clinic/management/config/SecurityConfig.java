@@ -71,6 +71,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/doctors/clinic/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/doctor/{id}").permitAll()
                 .requestMatchers("/auth/login").permitAll()
+                 
 
                 // 2. PRESCRIPTION RULES
                 .requestMatchers(HttpMethod.GET, "/api/doctor/prescriptions/**", "/api/patient/prescriptions/**", "/api/doctor/my-patients-history")
@@ -80,8 +81,9 @@ public class SecurityConfig {
                     .hasAnyAuthority("DOCTOR", "ROLE_DOCTOR", "ADMIN", "ROLE_ADMIN")
 
                 // 3. APPOINTMENT RULES
-              
-                .requestMatchers("/api/patient-appointments/**").hasAnyAuthority("PATIENT", "ROLE_PATIENT", "ADMIN", "ROLE_ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/patient-appointments/book").hasAnyAuthority("ROLE_PATIENT", "PATIENT")
+                .requestMatchers("/api/patient-appointments/**").hasAnyAuthority("ROLE_PATIENT", "PATIENT")
+                
                 .requestMatchers("/appointments/patient/**").hasAnyAuthority("PATIENT", "ROLE_PATIENT", "ADMIN", "ROLE_ADMIN")
                 .requestMatchers("/appointments/doctor/**", "/appointments/{id}/**").hasAnyAuthority("DOCTOR", "ROLE_DOCTOR", "ADMIN", "ROLE_ADMIN")
                 .requestMatchers("/appointments/**").hasAnyAuthority("PATIENT", "DOCTOR", "ADMIN", "ROLE_PATIENT", "ROLE_DOCTOR", "ROLE_ADMIN")
